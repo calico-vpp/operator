@@ -209,7 +209,9 @@ func validateCustomResource(instance *operatorv1.Installation) error {
 			}
 
 			if v6pool.Encapsulation != operatorv1.EncapsulationNone {
-				return fmt.Errorf("Encapsulation is not supported by IPv6 pools, but it is set for %s", v6pool.CIDR)
+				if instance.Spec.CalicoNetwork.LinuxDataplane == nil || *instance.Spec.CalicoNetwork.LinuxDataplane != operatorv1.LinuxDataplaneVPP {
+					return fmt.Errorf("Encapsulation is not supported by IPv6 pools, but it is set for %s", v6pool.CIDR)
+				}
 			}
 
 			if bpfDataplane {
